@@ -11,11 +11,14 @@ Follow the steps below to clone the repository and set up the project locally:
 
 ### Step 1: Clone the Repository
 
- ```bash
  git clone https://github.com/your-username/qr-code-generator-backend.git
  cd qr-code-generator-backend
 
+### Step 2: Install Dependencies
+
  npm install
+
+### Step 3: Run the Project
 
  npx nodemon server.js
 
