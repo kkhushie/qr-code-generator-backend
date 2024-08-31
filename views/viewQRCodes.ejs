@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated QR Codes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+   
+</head>
+<body>
+    <nav class="bg-blue-300 flex justify-around py-4 items-center">
+        <h1 class="uppercase font-semibold text-xl">Generated QR Codes</h1>
+        <p class="capitalize text-md bg-white rounded-lg px-2 py-1 hover:text-zinc-600 cursor-pointer">
+            <a href="/">Home</a>
+        </p>
+    </nav>
+
+    <div class="bg-blue-100 py-20 flex flex-col items-center">
+        <% if (qrCodes.length > 0) { %>
+            <% qrCodes.forEach(qrCode => { %>
+                <div class="bg-white p-4 mb-4 rounded-lg shadow-md w-2/3">
+                    <img src="<%= qrCode.qrCodeUrl %>" alt="QR Code" class="mb-2"/>
+                    <p class="text-gray-700"><strong>Link:</strong> <%= qrCode.link %></p>
+                    <p class="text-gray-500 text-sm">Generated on: <%= qrCode.createdAt.toLocaleString() %></p>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>No QR codes have been generated yet.</p>
+        <% } %>
+    </div>
+</body>
+</html>

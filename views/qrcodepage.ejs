@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        *{
+            border:1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <nav class="bg-blue-300 flex justify-around py-4 items-center">
+        <h1 class="uppercase font-semibold text-xl">QR Generator</h1>
+        <p class="capitalize text-md bg-white rounded-lg px-2 py-1 hover:text-zinc-600 cursor-pointer">
+            <a href="/about">About</a>
+        </p>
+        <a href="/view-qr" class="bg-blue-300 py-1 px-3 rounded-lg hover:bg-blue-500">View QR Codes</a>
+
+    </nav>
+
+    <div class="bg-blue-100 py-20 flex justify-center items-center gap-3">
+        <form action="/generate-qr" method="post">
+            <input type="text" name="link" class="border-2 border-blue-300 rounded-lg px-3 py-1 focus:border-blue-600 outline-none" placeholder="Paste the link here">
+            <button type="submit" class="bg-blue-300 py-1 px-3 rounded-lg hover:bg-blue-500">Generate</button>
+        </form>
+    </div>
+
+    <div class="flex items-center flex-col justify-center">
+        <% if(url){ %>
+            <img id="qrCodeImage" src="<%= url %>" alt="QR Code" class="mb-4"/>
+            <canvas id="qrCanvas" style="display:none;"></canvas>
+            <div class="flex gap-3">
+                <!-- Share Button -->
+                <button id="shareButton" class="bg-blue-300 px-3 py-1 cursor-pointer rounded-lg">Share</button>
+                <!-- Download Button -->
+                <a id="downloadButton" href="#" download="QRCode.png" class="bg-blue-300 px-3 py-1 cursor-pointer rounded-lg">Download</a>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+        const qrCodeImage = document.getElementById('qrCodeImage');
+        const qrCanvas = document.getElementById('qrCanvas');
+        const downloadButton = document.getElementById('downloadButton');
+
+        // Convert the QR code image to a data URL
+        qrCodeImage.onload = () => {
+            const ctx = qrCanvas.getContext('2d');
+            qrCanvas.width = qrCodeImage.width;
+            qrCanvas.height = qrCodeImage.height;
+            ctx.drawImage(qrCodeImage, 0, 0);
+            const dataUrl = qrCanvas.toDataURL('image/png');
+
+            // Set the download link
+            downloadButton.href = dataUrl;
+
+            // Share the image
+            document.getElementById('shareButton').addEventListener('click', () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'QR Code',
+                        text: 'Check out this QR code',
+                        files: [new File([dataURItoBlob(dataUrl)], 'QRCode.png', { type: 'image/png' })]
+                    }).then(() => {
+                        console.log('Thanks for sharing!');
+                    }).catch(console.error);
+                } else {
+                    alert('Sharing is not supported on this browser');
+                }
+            });
+        };
+
+        // Function to convert dataURL to Blob
+        function dataURItoBlob(dataURI) {
+            const byteString = atob(dataURI.split(',')[1]);
+            const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], { type: mimeString });
+        }
+    </script>
+</body>
+</html>
